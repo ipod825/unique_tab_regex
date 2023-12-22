@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "TabAutoClose",
+  "version": "1.0",
+  "permissions": [
+    "tabs",
+    "webNavigation"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
