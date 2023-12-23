@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Blacklist Manager</title>
+  <title>TabAutoClose Url Pattern</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -9,10 +9,17 @@
     }
     input {
       margin-bottom: 10px;
+      width: 500px;
     }
     button {
-      padding: 5px 10px;
-      cursor: pointer;
+      margin-left: 5px;
+      cursor: default;
+      color: #979ca0; /* Set text color to red */
+      background-color: transparent; /* Set background to transparent */
+      border: none;
+    }
+    button:hover {
+      color: red; /* Change text color to red on hover */
     }
     ul {
       list-style-type: none;
@@ -20,14 +27,19 @@
     }
     li {
       margin-bottom: 5px;
+      display: flex;
+      align-items: center;
     }
   </style>
 </head>
 <body>
-  <h2>Blacklist Manager</h2>
-  <input type="text" id="domainInput" placeholder="Enter domain to blacklist">
-  <button id="addButton">Add</button>
-  <ul id="domainList"></ul>
+  <h2>Url Matching Pattern</h2>
+  <p>
+  Two urls are considered the same if both match the pattern and all captured groups are the same.
+  </p>
+
+  <input type="text" id="patternInput" placeholder="New Pattern (Enter to confirm)">
+  <ul id="urlPattern"></ul>
 
   <script src="popup.js"></script>
 </body>

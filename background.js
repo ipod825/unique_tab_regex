@@ -1,3 +1,12 @@
+chrome.runtime.onInstalled.addListener(function () {
+  chrome.storage.sync.set({
+    urlPattern: [
+      "https://docs.google.com/document/d/([^/]*)",
+      "https://colab.corp.google.com/drive/([^#]*)",
+    ],
+  });
+});
+
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
   const { url, tabId } = details;
   replaceExistingTab(url, tabId);
@@ -27,8 +36,12 @@ async function replaceExistingTab(url, tabId) {
   }
 
   let tabs = await chrome.tabs.query({});
+  let data = await chrome.storage.sync.get("urlPattern");
+  const urlPattern = (data.urlPattern || []).map((s) => {
+    return RegExp(s);
+  });
   tabs.some((other) => {
-    if (other.id !== tabId && areUrlSimiliar(other.url, url)) {
+    if (other.id !== tabId && areUrlSimiliar(other.url, url, urlPattern)) {
       chrome.tabs.update(other.id, { active: true });
       chrome.tabs.remove(tabId);
       return true;
@@ -36,11 +49,9 @@ async function replaceExistingTab(url, tabId) {
   });
 }
 
-var urlRegex = [RegExp("https://docs.google.com/document/d/([^/]*)")];
-
-function areUrlSimiliar(url1, url2) {
-  for (let i = 0; i < urlRegex.length; ++i) {
-    let r = urlRegex[i];
+function areUrlSimiliar(url1, url2, urlPatterns) {
+  for (let i = 0; i < urlPatterns.length; ++i) {
+    let r = urlPatterns[i];
     let m1 = url1.match(r);
     let m2 = url2.match(r);
     if (m1 == null || m2 == null || m1.length != m2.length) {
