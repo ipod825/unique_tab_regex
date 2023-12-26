@@ -7,6 +7,8 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
+let _whitlist = [];
+
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
   const { url, tabId } = details;
   replaceExistingTab(url, tabId);
@@ -15,6 +17,23 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 chrome.tabs.onUpdated.addListener((_tabId, _changeInfo, tab) => {
   replaceExistingTab(tab.url, tab.id);
 });
+
+chrome.commands.onCommand.addListener(function (command) {
+  if (command === "UTR_DuplicateTab") {
+    DuplicateTab(-1);
+  }
+});
+
+async function DuplicateTab() {
+  const [currentTab] = await chrome.tabs.query({
+    active: true,
+  });
+  _whitlist.push(currentTab.url);
+  setTimeout(function () {
+    _whitlist.pop();
+  }, 3000);
+  await chrome.tabs.duplicate(currentTab.id);
+}
 
 async function isCurrentTab(tabId) {
   const [currentTab] = await chrome.tabs.query({
@@ -25,6 +44,9 @@ async function isCurrentTab(tabId) {
 }
 
 async function replaceExistingTab(url, tabId) {
+  if (_whitlist.includes(url)) {
+    return;
+  }
   if (url === "") {
     return;
   }
