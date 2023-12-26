@@ -3,10 +3,16 @@
   "name": "UniqueTabRegex",
   "version": "1.0",
   "permissions": [
+    "commands",
     "tabs",
     "webNavigation",
     "storage"
   ],
+  "commands": {
+    "UTR_DuplicateTab": {
+      "description": "Duplicate the tab without deduping logic."
+    }
+  },
   "background": {
     "service_worker": "background.js"
   },
